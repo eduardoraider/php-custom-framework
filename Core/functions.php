@@ -1,8 +1,9 @@
 <?php
 
 use Core\Response;
+use JetBrains\PhpStorm\NoReturn;
 
-function dd($value): void
+#[NoReturn] function dd($value): void
 {
     echo "<pre>";
     var_dump($value);
@@ -14,6 +15,15 @@ function dd($value): void
 function urlIs($value): bool
 {
     return $_SERVER['REQUEST_URI'] === $value;
+}
+
+#[NoReturn] function abort($code = 404): void
+{
+    http_response_code($code);
+
+    require base_path("views/{$code}.php");
+
+    die();
 }
 
 function authorize($condition, $status = Response::FORBIDDEN): void
