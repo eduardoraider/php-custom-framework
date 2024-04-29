@@ -1,0 +1,28 @@
+name: demo
+
+services:
+  php:
+    image: demo_image
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    command: php -S 0.0.0.0:8080 -t /app/public
+    container_name: demo_app
+
+  mysql:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'demo_db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-db:/var/lib/mysql
+    container_name: demo_mysql_db
+
+volumes:
+  mysql-db:
