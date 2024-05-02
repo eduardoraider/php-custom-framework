@@ -36,15 +36,16 @@ $user = $db->query('SELECT * FROM users WHERE email = :email', [
 
 if (!$user) {
 
-    $db->query('INSERT INTO users (name, email, password) VALUES (:name, :email, :password)', [
+    $user = $db->query('INSERT INTO users (name, email, password) VALUES (:name, :email, :password)', [
         'name' => $name,
         'email' => $email,
-        'password' => $password
+        'password' => password_hash($password, PASSWORD_BCRYPT)
     ]);
 
-    $_SESSION['user'] = true;
-    $_SESSION['name'] = $name;
-    $_SESSION['email'] = $email;
+    $_SESSION['user'] = [
+        'name' => $name,
+        'email' => $email,
+    ];
 
 }
 
