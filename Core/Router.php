@@ -65,9 +65,7 @@ class Router {
     #[NoReturn] protected function abort($code = 404) : void
     {
         http_response_code($code);
-
-        require "views/{$code}.php";
-
+        view("{$code}.php");
         die();
     }
 }
