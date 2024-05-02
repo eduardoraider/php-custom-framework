@@ -42,6 +42,7 @@ if (!$user) {
         'password' => $password
     ]);
 
+    $_SESSION['user'] = true;
     $_SESSION['name'] = $name;
     $_SESSION['email'] = $email;
 
