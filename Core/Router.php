@@ -1,46 +1,62 @@
 <?php
 
 namespace Core;
+use Core\Middleware\Middleware;
+use Exception;
 use JetBrains\PhpStorm\NoReturn;
 
 class Router {
 
     protected array $routes = [];
 
-    private function add($method, $uri, $controller): void
+    private function add($method, $uri, $controller): static
     {
         $this->routes[] = [
             'uri' => $uri,
             'controller' => $controller,
-            'method' => $method
+            'method' => $method,
+            'middleware' => null
         ];
+        return $this;
     }
-    public function get($uri, $controller): void
+    public function get($uri, $controller): static
     {
-        $this->add('GET', $uri, $controller);
+        return $this->add('GET', $uri, $controller);
     }
-    public function post($uri, $controller): void
+    public function post($uri, $controller): static
     {
-        $this->add('POST', $uri, $controller);
+        return $this->add('POST', $uri, $controller);
     }
-    public function put($uri, $controller): void
+    public function put($uri, $controller): static
     {
-        $this->add('PUT', $uri, $controller);
+        return $this->add('PUT', $uri, $controller);
     }
-    public function patch($uri, $controller): void
+    public function patch($uri, $controller): static
     {
-        $this->add('PATCH', $uri, $controller);
+        return $this->add('PATCH', $uri, $controller);
     }
-    public function delete($uri, $controller): void
+    public function delete($uri, $controller): static
     {
-        $this->add('DELETE', $uri, $controller);
+        return $this->add('DELETE', $uri, $controller);
+    }
+    public function only($key): static
+    {
+        $this->routes[array_key_last($this->routes)]['middleware'] = $key;
+        return $this;
     }
 
+    /**
+     * @throws Exception
+     */
     public function route($uri, $method)
     {
         foreach ($this->routes as $route) {
             if ($route['uri'] === $uri && $route['method'] === strtoupper($method)) {
+
+                Middleware::resolve($route['middleware']);
+
                 return require base_path($route['controller']);
+
             }
         }
         $this->abort();
